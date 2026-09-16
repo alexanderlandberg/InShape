@@ -1,3 +1,4 @@
+import { formatDisplayDate } from "@/lib/date";
 import type { BodyWeightLog } from "@/types";
 
 export function BodyWeightChart({ logs }: { logs: BodyWeightLog[] }) {
@@ -26,11 +27,11 @@ export function BodyWeightChart({ logs }: { logs: BodyWeightLog[] }) {
         <polyline points={points} fill="none" stroke="#39e07a" strokeWidth="2" />
       </svg>
       <div className="list-row" style={{ border: "none" }}>
-        <span className="text-muted">{recent[0].date}</span>
+        <span className="text-muted">{formatDisplayDate(recent[0].date)}</span>
         <span className="text-accent" style={{ fontWeight: 700 }}>
           {recent[recent.length - 1].weightKg} kg
         </span>
-        <span className="text-muted">{recent[recent.length - 1].date}</span>
+        <span className="text-muted">{formatDisplayDate(recent[recent.length - 1].date)}</span>
       </div>
     </div>
   );

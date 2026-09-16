@@ -9,7 +9,7 @@ export const SEED_EXERCISES: Exercise[] = [
   { id: "overhead_press", name: "Standing overhead press", type: "reps", equipment: "weights", metValue: 4.0, secondsPerRep: 3, weightKg: 10, order: 6 },
   { id: "rows", name: "Standing row / sawing pull", type: "reps", equipment: "weights", metValue: 4.0, secondsPerRep: 3, weightKg: 10, order: 7 },
   { id: "bench_press", name: "Bench press (lying, each hand)", type: "reps", equipment: "weights", metValue: 5.0, secondsPerRep: 4, weightKg: 10, order: 8 },
-  { id: "biking", name: "Biking", type: "duration", equipment: "none", metValue: 7.5, order: 9 },
+  { id: "biking", name: "Biking", type: "duration", equipment: "none", metValue: 7.5, trackDistance: true, order: 9 },
   { id: "vr_gaming", name: "VR gaming (active/intense)", type: "duration", equipment: "none", metValue: 6.0, order: 10 },
 ];
 

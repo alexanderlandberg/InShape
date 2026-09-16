@@ -26,3 +26,34 @@ export function startOfMonth(d: Date = new Date()): Date {
 export function isDateKeyInRange(key: string, from: Date): boolean {
   return key >= dateKey(from);
 }
+
+const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+const MONTHS = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+];
+
+function ordinalSuffix(day: number): string {
+  if (day % 100 >= 11 && day % 100 <= 13) return "th";
+  switch (day % 10) {
+    case 1:
+      return "st";
+    case 2:
+      return "nd";
+    case 3:
+      return "rd";
+    default:
+      return "th";
+  }
+}
+
+/**
+ * "YYYY-MM-DD" -> "Wednesday 16th Sep 2026". Parses components manually (not
+ * `new Date(dateStr)`, which treats the string as UTC midnight and can shift the
+ * displayed day/weekday depending on the viewer's timezone) — matches dateKey's
+ * local-time convention.
+ */
+export function formatDisplayDate(dateStr: string): string {
+  const [y, m, d] = dateStr.split("-").map(Number);
+  const local = new Date(y, m - 1, d);
+  return `${WEEKDAYS[local.getDay()]} ${d}${ordinalSuffix(d)} ${MONTHS[m - 1]} ${y}`;
+}

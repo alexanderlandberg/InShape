@@ -6,6 +6,8 @@ interface ExerciseStepCardProps {
   exercise: Exercise;
   value: number;
   onChange: (value: number) => void;
+  distanceKm?: number;
+  onDistanceChange?: (value: number | undefined) => void;
   personalBest?: number;
   onDone: () => void;
   currentIndex: number;
@@ -16,6 +18,8 @@ export function ExerciseStepCard({
   exercise,
   value,
   onChange,
+  distanceKm,
+  onDistanceChange,
   personalBest,
   onDone,
   currentIndex,
@@ -42,6 +46,23 @@ export function ExerciseStepCard({
         step={exercise.type === "duration" ? 5 : 1}
       />
       <p className="exercise-step-card__unit">{unit}</p>
+      {exercise.trackDistance && (
+        <div className="field" style={{ marginTop: "1rem" }}>
+          <label className="field__label" htmlFor="distance-km">
+            Distance (km)
+          </label>
+          <input
+            id="distance-km"
+            className="field__input"
+            type="number"
+            step="0.1"
+            inputMode="decimal"
+            value={distanceKm ?? ""}
+            onChange={(e) => onDistanceChange?.(e.target.value ? parseFloat(e.target.value) : undefined)}
+            style={{ textAlign: "center" }}
+          />
+        </div>
+      )}
       {personalBest !== undefined && personalBest > 0 && (
         <p
           className={`exercise-step-card__pb${

@@ -8,20 +8,15 @@ import {
   saveUserProfile,
   saveEarnedBadge,
 } from "@/lib/firestore";
-import {
-  calculateCalories,
-  calculateXp,
-  levelFromTotalXp,
-  FALLBACK_BODY_WEIGHT_KG,
-} from "@/lib/calculations";
+import { FALLBACK_BODY_WEIGHT_KG } from "@/lib/calculations";
 import { computePersonalBests } from "@/lib/stats";
 import { evaluateBadges, newlyEarnedBadges } from "@/lib/badges";
 import { dateKey } from "@/lib/date";
+import { buildSessionEntries, adjustProfileXp, type DraftEntry } from "@/lib/sessionBuilder";
 import { ExerciseStepCard } from "./ExerciseStepCard";
-import { EffortRatingPicker } from "./EffortRatingPicker";
 import { BodyWeightQuickInput } from "./BodyWeightQuickInput";
 import { SessionSummary } from "./SessionSummary";
-import type { Exercise, Effort, Session, SessionEntry, EarnedBadge } from "@/types";
+import type { Exercise, Session, SessionEntry, EarnedBadge } from "@/types";
 
 interface SessionRunnerProps {
   workoutId: string | null;
@@ -29,26 +24,19 @@ interface SessionRunnerProps {
   exercisesInSession: { exercise: Exercise; plannedValue: number }[];
 }
 
-type Phase = "logging" | "effort" | "bodyweight" | "saving" | "summary";
-
-interface DraftEntry {
-  exerciseId: string;
-  plannedValue: number;
-  actualValue: number;
-}
+type Phase = "logging" | "bodyweight" | "saving" | "summary";
 
 interface State {
   phase: Phase;
   stepIndex: number;
   entries: DraftEntry[];
-  effort: Effort | null;
 }
 
 type Action =
   | { type: "SET_VALUE"; exerciseId: string; value: number }
+  | { type: "SET_DISTANCE"; exerciseId: string; distanceKm: number | undefined }
   | { type: "GO_TO_STEP"; index: number }
   | { type: "NEXT_STEP" }
-  | { type: "SET_EFFORT"; effort: Effort }
   | { type: "GO_TO_SAVING" }
   | { type: "GO_TO_SUMMARY" };
 
@@ -61,15 +49,20 @@ function reducer(state: State, action: Action): State {
           e.exerciseId === action.exerciseId ? { ...e, actualValue: action.value } : e,
         ),
       };
+    case "SET_DISTANCE":
+      return {
+        ...state,
+        entries: state.entries.map((e) =>
+          e.exerciseId === action.exerciseId ? { ...e, distanceKm: action.distanceKm } : e,
+        ),
+      };
     case "GO_TO_STEP":
       return { ...state, stepIndex: action.index, phase: "logging" };
     case "NEXT_STEP": {
       const nextIndex = state.stepIndex + 1;
-      if (nextIndex >= state.entries.length) return { ...state, phase: "effort" };
+      if (nextIndex >= state.entries.length) return { ...state, phase: "bodyweight" };
       return { ...state, stepIndex: nextIndex };
     }
-    case "SET_EFFORT":
-      return { ...state, effort: action.effort, phase: "bodyweight" };
     case "GO_TO_SAVING":
       return { ...state, phase: "saving" };
     case "GO_TO_SUMMARY":
@@ -80,6 +73,7 @@ function reducer(state: State, action: Action): State {
 }
 
 interface SaveResult {
+  entries: SessionEntry[];
   totalCalories: number;
   totalXp: number;
   leveledUp: boolean;
@@ -89,11 +83,11 @@ interface SaveResult {
 }
 
 export function SessionRunner({ workoutId, workoutName, exercisesInSession }: SessionRunnerProps) {
-  const { sessions, bodyWeightLogs, userProfile, earnedBadges } = useAppData();
+  const { sessions: allSessions, bodyWeightLogs, userProfile, earnedBadges } = useAppData();
+  const sessions = useMemo(() => allSessions.filter((s) => !s.archived), [allSessions]);
   const [state, dispatch] = useReducer(reducer, {
     phase: "logging",
     stepIndex: 0,
-    effort: null,
     entries: exercisesInSession.map(({ exercise, plannedValue }) => ({
       exerciseId: exercise.id,
       plannedValue,
@@ -115,23 +109,12 @@ export function SessionRunner({ workoutId, workoutName, exercisesInSession }: Se
     const bodyWeightKg = enteredWeightKg ?? lastWeightKg ?? FALLBACK_BODY_WEIGHT_KG;
     const previousBests = computePersonalBests(sessions);
 
-    const sessionEntries: SessionEntry[] = state.entries.map((draft) => {
-      const exercise = exercisesById[draft.exerciseId];
-      return {
-        exerciseId: exercise.id,
-        exerciseName: exercise.name,
-        type: exercise.type,
-        plannedValue: draft.plannedValue,
-        actualValue: draft.actualValue,
-        metValue: exercise.metValue,
-        weightKg: exercise.weightKg,
-        estimatedCalories: calculateCalories(draft.actualValue, exercise, bodyWeightKg),
-        xpEarned: calculateXp(draft.actualValue, exercise),
-      };
-    });
+    const { entries: sessionEntries, totalCalories, totalXp } = buildSessionEntries(
+      state.entries,
+      exercisesById,
+      bodyWeightKg,
+    );
 
-    const totalCalories = Math.round(sessionEntries.reduce((sum, e) => sum + e.estimatedCalories, 0));
-    const totalXp = sessionEntries.reduce((sum, e) => sum + e.xpEarned, 0);
     const now = Date.now();
     const sessionId = `session-${now}`;
 
@@ -142,7 +125,6 @@ export function SessionRunner({ workoutId, workoutName, exercisesInSession }: Se
       workoutId,
       workoutName,
       entries: sessionEntries,
-      effort: state.effort ?? "medium",
       bodyWeightKg: enteredWeightKg,
       totalCalories,
       totalXp,
@@ -162,9 +144,7 @@ export function SessionRunner({ workoutId, workoutName, exercisesInSession }: Se
       });
     }
 
-    const newTotalXp = userProfile.totalXp + totalXp;
-    const { level } = levelFromTotalXp(newTotalXp);
-    const leveledUp = level > userProfile.level;
+    const { totalXp: newTotalXp, level, leveledUp } = adjustProfileXp(userProfile, 0, totalXp);
     await saveUserProfile({ totalXp: newTotalXp, level, updatedAt: now });
 
     const candidateBadges = evaluateBadges([...sessions, newSession]);
@@ -175,7 +155,7 @@ export function SessionRunner({ workoutId, workoutName, exercisesInSession }: Se
       (e) => !previousBests[e.exerciseId] || e.actualValue > previousBests[e.exerciseId],
     );
 
-    setResult({ totalCalories, totalXp, leveledUp, newLevel: level, newBadges, newPBs });
+    setResult({ entries: sessionEntries, totalCalories, totalXp, leveledUp, newLevel: level, newBadges, newPBs });
     dispatch({ type: "GO_TO_SUMMARY" });
   }
 
@@ -187,16 +167,16 @@ export function SessionRunner({ workoutId, workoutName, exercisesInSession }: Se
         exercise={exercise}
         value={draft.actualValue}
         onChange={(value) => dispatch({ type: "SET_VALUE", exerciseId: draft.exerciseId, value })}
+        distanceKm={draft.distanceKm}
+        onDistanceChange={(distanceKm) =>
+          dispatch({ type: "SET_DISTANCE", exerciseId: draft.exerciseId, distanceKm })
+        }
         personalBest={personalBests[draft.exerciseId]}
         onDone={() => dispatch({ type: "NEXT_STEP" })}
         currentIndex={state.stepIndex}
         totalSteps={state.entries.length}
       />
     );
-  }
-
-  if (state.phase === "effort") {
-    return <EffortRatingPicker onSelect={(effort) => dispatch({ type: "SET_EFFORT", effort })} />;
   }
 
   if (state.phase === "bodyweight") {
@@ -209,6 +189,7 @@ export function SessionRunner({ workoutId, workoutName, exercisesInSession }: Se
 
   return (
     <SessionSummary
+      entries={result.entries}
       totalCalories={result.totalCalories}
       totalXp={result.totalXp}
       leveledUp={result.leveledUp}

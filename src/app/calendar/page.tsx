@@ -6,7 +6,8 @@ import { MonthGrid } from "@/components/calendar/MonthGrid";
 import { DayDetailPanel } from "@/components/calendar/DayDetailPanel";
 
 export default function CalendarPage() {
-  const { sessions, loading } = useAppData();
+  const { sessions: allSessions, loading } = useAppData();
+  const sessions = useMemo(() => allSessions.filter((s) => !s.archived), [allSessions]);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
   const markedDates = useMemo(() => new Set(sessions.map((s) => s.date)), [sessions]);

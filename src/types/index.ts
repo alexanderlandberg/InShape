@@ -1,6 +1,5 @@
 export type ExerciseType = "reps" | "duration";
 export type Equipment = "weights" | "none";
-export type Effort = "low" | "medium" | "high";
 
 export interface Exercise {
   id: string;
@@ -10,6 +9,7 @@ export interface Exercise {
   metValue: number;
   secondsPerRep?: number; // reps-type only, default 3
   weightKg?: number; // load moved per rep, for "kilos lifted" stat
+  trackDistance?: boolean; // duration exercises with a distance component (e.g. biking)
   order: number;
   archived?: boolean;
 }
@@ -36,6 +36,7 @@ export interface SessionEntry {
   actualValue: number;
   metValue: number;
   weightKg?: number;
+  distanceKm?: number;
   estimatedCalories: number;
   xpEarned: number;
 }
@@ -47,10 +48,10 @@ export interface Session {
   workoutId: string | null; // null = ad-hoc activity
   workoutName: string;
   entries: SessionEntry[];
-  effort: Effort;
   bodyWeightKg?: number;
   totalCalories: number;
   totalXp: number;
+  archived?: boolean;
   createdAt: number;
   updatedAt: number;
 }

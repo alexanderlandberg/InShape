@@ -9,7 +9,8 @@ import { overallTotals } from "@/lib/stats";
 import { levelFromTotalXp } from "@/lib/calculations";
 
 export default function StatsPage() {
-  const { sessions, exercises, earnedBadges, bodyWeightLogs, userProfile, loading } = useAppData();
+  const { sessions: allSessions, exercises, earnedBadges, bodyWeightLogs, userProfile, loading } = useAppData();
+  const sessions = allSessions.filter((s) => !s.archived);
 
   if (loading) return <p className="empty-state">Loading…</p>;
 
@@ -40,6 +41,10 @@ export default function StatsPage() {
         <div className="stat-summary__tile">
           <div className="stat-summary__value">{totals.bikingMinutes + totals.vrMinutes}</div>
           <div className="stat-summary__label">Bike + VR min</div>
+        </div>
+        <div className="stat-summary__tile">
+          <div className="stat-summary__value">{totals.totalBikingKm}</div>
+          <div className="stat-summary__label">Bike km</div>
         </div>
       </div>
 

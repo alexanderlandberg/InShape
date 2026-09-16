@@ -20,7 +20,7 @@ export default function HomePage() {
 
   const { xpIntoLevel, xpToNext } = levelFromTotalXp(userProfile.totalXp);
   const weekStart = startOfWeek();
-  const weekSessions = sessions.filter((s) => isDateKeyInRange(s.date, weekStart));
+  const weekSessions = sessions.filter((s) => !s.archived && isDateKeyInRange(s.date, weekStart));
   const weekTotals = overallTotals(weekSessions);
   const lastWeightKg =
     bodyWeightLogs.length > 0 ? bodyWeightLogs[bodyWeightLogs.length - 1].weightKg : undefined;

@@ -49,3 +49,12 @@ export function kgLifted(actualValue: number, exercise: Exercise): number {
   if (exercise.type !== "reps" || !exercise.weightKg) return 0;
   return exercise.weightKg * actualValue;
 }
+
+/** Average speed in km/h, computed on the fly for display — never stored, so it can't drift after an edit. */
+export function calculateAvgSpeedKmh(
+  distanceKm: number | undefined,
+  durationMinutes: number,
+): number | undefined {
+  if (!distanceKm || durationMinutes <= 0) return undefined;
+  return Math.round((distanceKm / (durationMinutes / 60)) * 10) / 10;
+}
