@@ -1,0 +1,51 @@
+@use "variables" as *;
+@use "mixins" as *;
+
+.btn {
+  @include btn-base;
+  background: $bg-elevated;
+  color: $text-primary;
+
+  &:hover:not(:disabled) {
+    background: $border-default;
+  }
+
+  &--primary {
+    background: $accent-primary;
+    color: $bg-root;
+
+    &:hover:not(:disabled) {
+      background: $accent-primary-hover;
+    }
+  }
+
+  &--ghost {
+    background: none;
+    border: 1px solid $border-default;
+    color: $text-secondary;
+
+    &:hover:not(:disabled) {
+      border-color: $text-secondary;
+      color: $text-primary;
+    }
+  }
+
+  &--danger {
+    background: none;
+    color: $accent-danger;
+
+    &:hover:not(:disabled) {
+      background: rgba($accent-danger, 0.1);
+    }
+  }
+
+  &--block {
+    width: 100%;
+  }
+
+  &--lg {
+    padding: 1rem 1.75rem;
+    font-size: 1.0625rem;
+    border-radius: 1rem;
+  }
+}

@@ -1,0 +1,39 @@
+// ── Colors ────────────────────────────────────────────────────────────────────
+
+// Backgrounds
+$bg-root: #0b0f0d;
+$bg-card: #121713;
+$bg-elevated: #1a221c;
+$bg-warning: #1a1208;
+
+// Borders
+$border-subtle: #1c231e;
+$border-default: #2a352d;
+$border-muted: #3a473d;
+
+// Text
+$text-primary: #eef5f0;
+$text-secondary: #8fae9a;
+$text-muted: #5c6b61;
+$text-faint: #3d4841;
+
+// Accents
+$accent-primary: #39e07a;
+$accent-primary-hover: #2fc968;
+$accent-primary-dark: #163d29;
+$accent-gold: #f5c518;
+$accent-danger: #e0453f;
+
+// ── Typography ────────────────────────────────────────────────────────────────
+
+$font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
+
+$tracking-normal: 0.02em;
+$tracking-wide: 0.08em;
+$tracking-ultra: 0.2em;
+
+// ── Breakpoints ───────────────────────────────────────────────────────────────
+
+$bp-sm: 640px;
+$bp-md: 768px;
+$bp-lg: 1024px;

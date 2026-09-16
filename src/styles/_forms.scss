@@ -1,0 +1,76 @@
+@use "variables" as *;
+@use "mixins" as *;
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+  margin-bottom: 1rem;
+
+  &__label {
+    @include section-label;
+  }
+
+  &__input {
+    @include input-base;
+  }
+
+  &__select {
+    @include input-base;
+  }
+
+  &__hint {
+    font-size: 0.75rem;
+    color: $text-muted;
+  }
+}
+
+.radio-group {
+  display: flex;
+  gap: 0.5rem;
+
+  &__option {
+    @include btn-base;
+    flex: 1;
+    background: $bg-elevated;
+    color: $text-secondary;
+    border: 1px solid $border-default;
+
+    &--selected {
+      background: $accent-primary-dark;
+      border-color: $accent-primary;
+      color: $accent-primary;
+    }
+  }
+}
+
+.number-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+
+  &__btn {
+    @include btn-base;
+    width: 3rem;
+    height: 3rem;
+    padding: 0;
+    background: $bg-elevated;
+    color: $text-primary;
+    font-size: 1.5rem;
+    border-radius: 50%;
+
+    &:hover:not(:disabled) {
+      background: $border-default;
+    }
+  }
+
+  &__value {
+    min-width: 5rem;
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: $text-primary;
+    font-variant-numeric: tabular-nums;
+  }
+}

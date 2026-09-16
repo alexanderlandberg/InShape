@@ -1,0 +1,76 @@
+@use "../variables" as *;
+
+.month-grid {
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  &__label {
+    font-weight: 700;
+    font-size: 1.0625rem;
+  }
+
+  &__nav {
+    background: none;
+    border: none;
+    color: $text-secondary;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.25rem 0.75rem;
+
+    &:hover {
+      color: $text-primary;
+    }
+  }
+
+  &__weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    color: $text-muted;
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  &__days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.25rem;
+  }
+
+  &__day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    border-radius: 0.5rem;
+    color: $text-secondary;
+    font-size: 0.875rem;
+    cursor: pointer;
+    position: relative;
+
+    &--marked::after {
+      content: "";
+      position: absolute;
+      bottom: 4px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: $accent-primary;
+    }
+
+    &--today {
+      border: 1px solid $border-muted;
+    }
+
+    &--selected {
+      background: $accent-primary-dark;
+      color: $accent-primary;
+    }
+  }
+}

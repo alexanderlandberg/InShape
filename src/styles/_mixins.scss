@@ -1,0 +1,118 @@
+@use "variables" as *;
+
+// ── Responsive breakpoints ────────────────────────────────────────────────────
+
+@mixin sm {
+  @media (min-width: #{$bp-sm}) {
+    @content;
+  }
+}
+@mixin md {
+  @media (min-width: #{$bp-md}) {
+    @content;
+  }
+}
+@mixin lg {
+  @media (min-width: #{$bp-lg}) {
+    @content;
+  }
+}
+
+// ── Typography helpers ────────────────────────────────────────────────────────
+
+@mixin section-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: $tracking-wide;
+  text-transform: uppercase;
+  color: $text-secondary;
+}
+
+@mixin page-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: $tracking-normal;
+  color: $text-primary;
+}
+
+// ── Button base ───────────────────────────────────────────────────────────────
+
+@mixin btn-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  border-radius: 0.75rem;
+  transition:
+    background-color 0.15s,
+    color 0.15s,
+    border-color 0.15s,
+    opacity 0.15s;
+  cursor: pointer;
+  border: none;
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+}
+
+// ── Form inputs ───────────────────────────────────────────────────────────────
+
+@mixin input-base {
+  width: 100%;
+  background: $bg-elevated;
+  border: 1px solid $border-default;
+  color: $text-primary;
+  padding: 0.625rem 0.875rem;
+  border-radius: 0.625rem;
+  font-size: 1rem;
+  font-family: inherit;
+  outline: none;
+
+  &:focus {
+    border-color: $accent-primary;
+  }
+}
+
+// ── Card ──────────────────────────────────────────────────────────────────────
+
+@mixin card {
+  background: $bg-card;
+  border: 1px solid $border-subtle;
+  border-radius: 1rem;
+  padding: 1.25rem;
+}
+
+// ── Overlay ───────────────────────────────────────────────────────────────────
+
+@mixin modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 50;
+
+  @include sm {
+    align-items: center;
+  }
+}
+
+// ── Safe area (PWA / notched devices) ────────────────────────────────────────
+
+@mixin safe-area-bottom {
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px));
+}
+
+// ── Truncate text ─────────────────────────────────────────────────────────────
+
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

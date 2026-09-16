@@ -1,0 +1,31 @@
+@use "../variables" as *;
+@use "../mixins" as *;
+
+.modal-overlay {
+  @include modal-overlay;
+}
+
+.modal {
+  @include card;
+  width: 100%;
+  max-width: 28rem;
+  border-radius: 1.25rem 1.25rem 0 0;
+  max-height: 85vh;
+  overflow-y: auto;
+
+  @include sm {
+    border-radius: 1.25rem;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  &__title {
+    @include page-title;
+    font-size: 1.125rem;
+  }
+}
