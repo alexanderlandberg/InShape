@@ -8,7 +8,7 @@ const ITEMS = [
   { href: "/log", icon: "💪", label: "Log" },
   { href: "/workouts", icon: "📋", label: "Workouts" },
   { href: "/stats", icon: "📊", label: "Stats" },
-  { href: "/calendar", icon: "📅", label: "Calendar" },
+  { href: "/calendar", icon: "🕘", label: "History" },
 ];
 
 export function BottomNav() {
