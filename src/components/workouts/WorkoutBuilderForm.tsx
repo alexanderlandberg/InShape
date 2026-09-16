@@ -24,13 +24,16 @@ export function WorkoutBuilderForm({ initialWorkout }: WorkoutBuilderFormProps) 
   const exercisesById = Object.fromEntries(exercises.map((e) => [e.id, e]));
   const canSave = name.trim().length > 0 && items.length > 0 && !saving;
 
+  // Array position is the source of truth for order — always renumber to match it,
+  // so `order` can never drift or collide after add/remove/reorder combinations.
+  function renumber(list: WorkoutExercise[]): WorkoutExercise[] {
+    return list.map((it, i) => ({ ...it, order: i + 1 }));
+  }
+
   function addExercise(exerciseId: string) {
     const exercise = exercisesById[exerciseId];
     const defaultValue = exercise?.type === "duration" ? 15 : 10;
-    setItems((prev) => [
-      ...prev,
-      { exerciseId, plannedValue: defaultValue, order: prev.length + 1 },
-    ]);
+    setItems((prev) => renumber([...prev, { exerciseId, plannedValue: defaultValue, order: 0 }]));
     setPickerOpen(false);
   }
 
@@ -41,7 +44,17 @@ export function WorkoutBuilderForm({ initialWorkout }: WorkoutBuilderFormProps) 
   }
 
   function removeExercise(exerciseId: string) {
-    setItems((prev) => prev.filter((it) => it.exerciseId !== exerciseId));
+    setItems((prev) => renumber(prev.filter((it) => it.exerciseId !== exerciseId)));
+  }
+
+  function moveItem(index: number, direction: -1 | 1) {
+    setItems((prev) => {
+      const targetIndex = index + direction;
+      if (targetIndex < 0 || targetIndex >= prev.length) return prev;
+      const next = [...prev];
+      [next[index], next[targetIndex]] = [next[targetIndex], next[index]];
+      return renumber(next);
+    });
   }
 
   async function handleSave() {
@@ -84,21 +97,41 @@ export function WorkoutBuilderForm({ initialWorkout }: WorkoutBuilderFormProps) 
         {items.length === 0 ? (
           <p className="empty-state">No exercises added yet.</p>
         ) : (
-          items.map((item) => {
+          items.map((item, index) => {
             const exercise = exercisesById[item.exerciseId];
             if (!exercise) return null;
             return (
               <div className="workout-item" key={item.exerciseId}>
                 <div className="workout-item__header">
                   <span className="workout-item__name">{exercise.name}</span>
-                  <button
-                    type="button"
-                    className="workout-item__remove"
-                    onClick={() => removeExercise(item.exerciseId)}
-                    aria-label="Remove"
-                  >
-                    ✕
-                  </button>
+                  <div className="workout-item__actions">
+                    <button
+                      type="button"
+                      className="workout-item__move"
+                      onClick={() => moveItem(index, -1)}
+                      disabled={index === 0}
+                      aria-label="Move up"
+                    >
+                      ▲
+                    </button>
+                    <button
+                      type="button"
+                      className="workout-item__move"
+                      onClick={() => moveItem(index, 1)}
+                      disabled={index === items.length - 1}
+                      aria-label="Move down"
+                    >
+                      ▼
+                    </button>
+                    <button
+                      type="button"
+                      className="workout-item__remove"
+                      onClick={() => removeExercise(item.exerciseId)}
+                      aria-label="Remove"
+                    >
+                      ✕
+                    </button>
+                  </div>
                 </div>
                 <NumberStepper
                   value={item.plannedValue}
