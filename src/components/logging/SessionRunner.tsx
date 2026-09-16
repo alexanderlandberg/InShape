@@ -35,6 +35,7 @@ interface State {
 type Action =
   | { type: "SET_VALUE"; exerciseId: string; value: number }
   | { type: "SET_DISTANCE"; exerciseId: string; distanceKm: number | undefined }
+  | { type: "SET_WEIGHT"; exerciseId: string; weightKg: number | undefined }
   | { type: "GO_TO_STEP"; index: number }
   | { type: "NEXT_STEP" }
   | { type: "GO_TO_SAVING" }
@@ -54,6 +55,13 @@ function reducer(state: State, action: Action): State {
         ...state,
         entries: state.entries.map((e) =>
           e.exerciseId === action.exerciseId ? { ...e, distanceKm: action.distanceKm } : e,
+        ),
+      };
+    case "SET_WEIGHT":
+      return {
+        ...state,
+        entries: state.entries.map((e) =>
+          e.exerciseId === action.exerciseId ? { ...e, weightKg: action.weightKg } : e,
         ),
       };
     case "GO_TO_STEP":
@@ -92,6 +100,7 @@ export function SessionRunner({ workoutId, workoutName, exercisesInSession }: Se
       exerciseId: exercise.id,
       plannedValue,
       actualValue: plannedValue,
+      weightKg: exercise.weightKg,
     })),
   });
   const [result, setResult] = useState<SaveResult | null>(null);
@@ -170,6 +179,10 @@ export function SessionRunner({ workoutId, workoutName, exercisesInSession }: Se
         distanceKm={draft.distanceKm}
         onDistanceChange={(distanceKm) =>
           dispatch({ type: "SET_DISTANCE", exerciseId: draft.exerciseId, distanceKm })
+        }
+        weightKg={draft.weightKg}
+        onWeightChange={(weightKg) =>
+          dispatch({ type: "SET_WEIGHT", exerciseId: draft.exerciseId, weightKg })
         }
         personalBest={personalBests[draft.exerciseId]}
         onDone={() => dispatch({ type: "NEXT_STEP" })}

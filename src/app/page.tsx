@@ -61,18 +61,11 @@ export default function HomePage() {
         </Button>
       </Link>
 
-      <div style={{ display: "flex", gap: "0.75rem", marginBottom: "0.75rem" }}>
-        <Link href="/log/activity/biking" style={{ flex: 1 }}>
-          <Button variant="ghost" block>
-            🚴 Biking
-          </Button>
-        </Link>
-        <Link href="/log/activity/vr_gaming" style={{ flex: 1 }}>
-          <Button variant="ghost" block>
-            🎮 VR
-          </Button>
-        </Link>
-      </div>
+      <Link href="/log/activity/biking" style={{ display: "block", marginBottom: "0.75rem" }}>
+        <Button variant="ghost" block>
+          🚴 Biking
+        </Button>
+      </Link>
 
       <Button variant="ghost" block onClick={() => setWeightModalOpen(true)}>
         + Log weight

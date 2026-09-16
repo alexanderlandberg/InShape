@@ -8,10 +8,15 @@ import { formatDisplayDate } from "@/lib/date";
 import type { Session, SessionEntry } from "@/types";
 
 function entryTag(entry: SessionEntry): string {
-  const base = `${entry.actualValue} ${entry.type === "duration" ? "min" : "reps"}`;
-  if (entry.distanceKm === undefined) return base;
-  const avgSpeed = calculateAvgSpeedKmh(entry.distanceKm, entry.actualValue);
-  return `${base} · ${entry.distanceKm}km${avgSpeed !== undefined ? ` · ${avgSpeed} km/h` : ""}`;
+  let tag = `${entry.actualValue} ${entry.type === "duration" ? "min" : "reps"}`;
+  if (entry.distanceKm !== undefined) {
+    const avgSpeed = calculateAvgSpeedKmh(entry.distanceKm, entry.actualValue);
+    tag += ` · ${entry.distanceKm}km${avgSpeed !== undefined ? ` · ${avgSpeed} km/h` : ""}`;
+  }
+  if (entry.weightKg !== undefined) {
+    tag += ` · ${entry.weightKg}kg`;
+  }
+  return tag;
 }
 
 function SessionListItem({ session }: { session: Session }) {

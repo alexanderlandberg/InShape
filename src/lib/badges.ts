@@ -16,7 +16,7 @@ interface BadgeDefinition {
 // Extend this list to add new milestone badges — no other code changes needed.
 export const BADGE_DEFINITIONS: BadgeDefinition[] = [
   { id: "pushups_100", label: "100 push-ups", scope: "lifetime", metric: "reps", exerciseId: "pushups", threshold: 100 },
-  { id: "crunches_1000", label: "1,000 crunches", scope: "lifetime", metric: "reps", exerciseId: "crunches", threshold: 1000 },
+  { id: "crunches_1000", label: "1,000 back extensions", scope: "lifetime", metric: "reps", exerciseId: "crunches", threshold: 1000 },
   { id: "situps_1000", label: "1,000 sit-ups", scope: "lifetime", metric: "reps", exerciseId: "situps", threshold: 1000 },
   { id: "squats_500", label: "500 squats", scope: "lifetime", metric: "reps", exerciseId: "squats", threshold: 500 },
   { id: "kg_lifted_10000_lifetime", label: "10,000kg lifted", scope: "lifetime", metric: "kgLifted", threshold: 10000 },

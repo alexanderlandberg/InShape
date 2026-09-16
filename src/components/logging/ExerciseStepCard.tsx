@@ -8,6 +8,8 @@ interface ExerciseStepCardProps {
   onChange: (value: number) => void;
   distanceKm?: number;
   onDistanceChange?: (value: number | undefined) => void;
+  weightKg?: number;
+  onWeightChange?: (value: number | undefined) => void;
   personalBest?: number;
   onDone: () => void;
   currentIndex: number;
@@ -20,6 +22,8 @@ export function ExerciseStepCard({
   onChange,
   distanceKm,
   onDistanceChange,
+  weightKg,
+  onWeightChange,
   personalBest,
   onDone,
   currentIndex,
@@ -59,6 +63,23 @@ export function ExerciseStepCard({
             inputMode="decimal"
             value={distanceKm ?? ""}
             onChange={(e) => onDistanceChange?.(e.target.value ? parseFloat(e.target.value) : undefined)}
+            style={{ textAlign: "center" }}
+          />
+        </div>
+      )}
+      {exercise.weightKg !== undefined && (
+        <div className="field" style={{ marginTop: "1rem" }}>
+          <label className="field__label" htmlFor="weight-kg">
+            Weight (kg)
+          </label>
+          <input
+            id="weight-kg"
+            className="field__input"
+            type="number"
+            step="0.5"
+            inputMode="decimal"
+            value={weightKg ?? ""}
+            onChange={(e) => onWeightChange?.(e.target.value ? parseFloat(e.target.value) : undefined)}
             style={{ textAlign: "center" }}
           />
         </div>

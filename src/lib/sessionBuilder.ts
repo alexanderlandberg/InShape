@@ -6,6 +6,7 @@ export interface DraftEntry {
   plannedValue: number;
   actualValue: number;
   distanceKm?: number;
+  weightKg?: number;
 }
 
 export interface BuiltEntries {
@@ -33,7 +34,7 @@ export function buildSessionEntries(
       plannedValue: draft.plannedValue,
       actualValue: draft.actualValue,
       metValue: exercise.metValue,
-      weightKg: exercise.weightKg,
+      weightKg: draft.weightKg ?? exercise.weightKg,
       distanceKm: draft.distanceKm,
       estimatedCalories: calculateCalories(draft.actualValue, exercise, bodyWeightKg),
       xpEarned: calculateXp(draft.actualValue, exercise),
