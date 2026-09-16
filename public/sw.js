@@ -19,6 +19,10 @@ self.addEventListener("fetch", (event) => {
   const { request } = event;
   if (request.method !== "GET") return;
 
+  // The Cache API only supports http(s) — browser extensions can trigger fetch
+  // events with schemes like chrome-extension:// that must be left untouched.
+  if (!request.url.startsWith("http")) return;
+
   const isStaticAsset = /\.(?:png|jpg|jpeg|svg|ico|webmanifest|woff2?)$/.test(
     new URL(request.url).pathname,
   );
