@@ -39,8 +39,8 @@ export default function StatsPage() {
           <div className="stat-summary__label">Kg Lifted</div>
         </div>
         <div className="stat-summary__tile">
-          <div className="stat-summary__value">{totals.bikingMinutes + totals.vrMinutes}</div>
-          <div className="stat-summary__label">Bike + VR min</div>
+          <div className="stat-summary__value">{totals.bikingMinutes}</div>
+          <div className="stat-summary__label">Bike min</div>
         </div>
         <div className="stat-summary__tile">
           <div className="stat-summary__value">{totals.totalBikingKm}</div>

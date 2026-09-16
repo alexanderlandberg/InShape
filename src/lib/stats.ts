@@ -47,7 +47,6 @@ export interface OverallTotals {
   totalCalories: number;
   totalKgLifted: number;
   bikingMinutes: number;
-  vrMinutes: number;
   totalBikingKm: number;
 }
 
@@ -55,7 +54,6 @@ export function overallTotals(sessions: Session[]): OverallTotals {
   let totalCalories = 0;
   let totalKgLifted = 0;
   let bikingMinutes = 0;
-  let vrMinutes = 0;
   let totalBikingKm = 0;
   for (const session of sessions) {
     totalCalories += session.totalCalories;
@@ -65,7 +63,6 @@ export function overallTotals(sessions: Session[]): OverallTotals {
         bikingMinutes += entry.actualValue;
         totalBikingKm += entry.distanceKm ?? 0;
       }
-      if (entry.exerciseId === "vr_gaming") vrMinutes += entry.actualValue;
     }
   }
   return {
@@ -73,7 +70,6 @@ export function overallTotals(sessions: Session[]): OverallTotals {
     totalCalories: Math.round(totalCalories),
     totalKgLifted: Math.round(totalKgLifted),
     bikingMinutes,
-    vrMinutes,
     totalBikingKm: Math.round(totalBikingKm * 10) / 10,
   };
 }

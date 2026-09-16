@@ -16,7 +16,7 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: "InShape",
-  description: "Personal home workout, biking, and VR session tracker",
+  description: "Personal home workout and biking session tracker",
   manifest: "/site.webmanifest",
   appleWebApp: {
     capable: true,
